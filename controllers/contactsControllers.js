@@ -36,9 +36,7 @@ const deleteContact = async (req, res, next) => {
     if (!result) {
       throw HttpError(404, `Contact with id=${id} not found`);
     }
-    res.json({
-      message: "Delete success",
-    });
+    res.json(result);
   } catch (error) {
     next(error);
   }
@@ -67,6 +65,9 @@ const updateContact = async (req, res, next) => {
     const result = await contactsServices.updateContactById(id, req.body);
     if (!result) {
       throw HttpError(404, `Contact with id=${id} not found`);
+    }
+    if (Object.keys(req.body).length === 0) {
+      throw HttpError(400, "Body must have at least one field");
     }
     res.json(result);
   } catch (error) {
