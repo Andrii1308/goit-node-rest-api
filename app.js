@@ -6,9 +6,9 @@ import "dotenv/config";
 
 import contactsRouter from "./routes/contactsRouter.js";
 
-const app = express();
-
 const { DB_HOST, PORT = 3000 } = process.env;
+
+const app = express();
 
 app.use(morgan("tiny"));
 app.use(cors());
