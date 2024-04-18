@@ -33,7 +33,7 @@ const getOneContact = async (req, res, next) => {
 const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await contactsServices.removeContact(id);
+    const result = await contactsServices.deleteContactById(id);
     if (!result) {
       throw HttpError(404, `Contact with id=${id} not found`);
     }
