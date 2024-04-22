@@ -6,6 +6,8 @@ import HttpError from "../helpers/HttpError.js";
 
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 
+import bcrypt from "bcrypt";
+
 const { JWT_SECRET } = process.env;
 
 const signup = async (req, res) => {
@@ -24,16 +26,13 @@ const signup = async (req, res) => {
   });
 };
 
-const signin = async (req, res, next) => {
+const signin = async (req, res) => {
   const { email, password } = req.body;
   const user = await authServices.findUser({ email });
   if (!user) {
     throw HttpError(401, "Email or password is wrong");
   }
-  const comparePassword = authServices.validatePassword(
-    password,
-    user.password
-  );
+  const comparePassword = await bcrypt.compare(password, user.password);
 
   if (!comparePassword) {
     throw HttpError(401, "Email or password is wrong");
@@ -51,7 +50,7 @@ const signin = async (req, res, next) => {
   res.json({
     token,
     user: {
-      email,
+      email: user.email,
       subscription: user.subscription,
     },
   });
