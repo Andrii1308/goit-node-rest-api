@@ -22,7 +22,7 @@ const getOneContact = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { _id: owner } = req.user;
-    const result = await contactsServices.getContactById({ _id: id, owner });
+    const result = await contactsServices.getOneContact({ _id: id, owner });
     if (!result) {
       throw HttpError(404, `Contact with id=${id} not found`);
     }
@@ -36,7 +36,7 @@ const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { _id: owner } = req.user;
-    const result = await contactsServices.deleteContactById({ _id: id, owner });
+    const result = await contactsServices.deleteOneContact({ _id: id, owner });
     if (!result) {
       throw HttpError(404, `Contact with id=${id} not found`);
     }
@@ -70,7 +70,7 @@ const updateContact = async (req, res, next) => {
     }
     const { id } = req.params;
     const { _id: owner } = req.user;
-    const result = await contactsServices.updateContactById(
+    const result = await contactsServices.updateOneContact(
       { _id: id, owner },
       req.body
     );
@@ -84,21 +84,15 @@ const updateContact = async (req, res, next) => {
 };
 
 
-const updateFavorite = async (req, res, next) => {
-  try {
-    const { error } = updateFavoriteSchema.validate(req.body);
-    if (error) {
-      throw HttpError(400, "Valid favorite is required");
-    }
-    const { id } = req.params;
-    const result = await contactsServices.updateStatusContact(id, req.body);
-    if (!result) {
-      throw HttpError(404, "Not found");
-    }
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
+const updateFavorite = async (req, res) => {
+  const { _id: owner } = req.user;
+  const { id } = req.params;
+  const result = await contactsServices.updateStatusContact(
+    { owner, _id: id },
+    req.body
+  );
+  if (!result) throw HttpError(404, `Not found`);
+  res.json(result);
 };
 
 export default {
