@@ -8,6 +8,8 @@ import gravatar from "gravatar";
 
 import fs from "fs/promises";
 
+import bcrypt from "bcrypt";
+
 import * as authServices from "../services/authServices.js";
 
 import HttpError from "../helpers/HttpError.js";
@@ -21,7 +23,7 @@ const { JWT_SECRET } = process.env;
 const avatarsPath = path.resolve("public", "avatars");
 
 const signup = async (req, res) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
   const user = await authServices.findUser({ email });
   if (user) {
     throw HttpError(409, "Email is use");
